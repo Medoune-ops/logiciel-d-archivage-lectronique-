@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DARK - Logiciel d'Archivage Électronique</title>
+    <link rel="icon" type="images/png" href="iconedark2.png" />
+    <link rel="stylesheet" href="interface.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+    <div id="bg-canvas-container"></div>
+    <header>
+        <h1>DARK</h1>
+        <nav>
+            <button id="btn-dashboard" class="nav-btn active"><i data-lucide="layout-dashboard"></i> Tableau de
+                bord</button>
+            <button id="btn-documents" class="nav-btn"><i data-lucide="folder"></i> Documents</button>
+            <button id="btn-recherche" class="nav-btn"><i data-lucide="search"></i> Recherche</button>
+            <button id="btn-parametres" class="nav-btn"><i data-lucide="settings"></i> Paramètres</button>
+            <button id="btn-connexion" class="nav-btn"><i data-lucide="log-in"></i> Connexion</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Page de Connexion -->
+        <section id="connexion" class="section hidden">
+            <div class="auth-container">
+                <h2>Connexion à DARK</h2>
+                <form id="form-connexion">
+                    <div class="form-group">
+                        <label for="email-connexion">Email :</label>
+                        <input type="email" id="email-connexion" name="email" placeholder="Votre adresse email"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mot-de-passe-connexion">Mot de passe :</label>
+                        <input type="password" id="mot-de-passe-connexion" name="motDePasse"
+                            placeholder="Votre mot de passe" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Se connecter</button>
+                        <button type="button" id="btn-vers-inscription" class="btn-secondary">Créer un compte</button>
+                    </div>
+                </form>
+                <div class="auth-links">
+                    <a href="#" id="lien-mot-de-passe-oublie">Mot de passe oublié ?</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page d'Inscription -->
+        <section id="inscription" class="section hidden">
+            <div class="auth-container">
+                <h2>Créer un compte DARK</h2>
+                <form id="form-inscription">
+                    <div class="form-group">
+                        <label for="nom-inscription">Nom :</label>
+                        <input type="text" id="nom-inscription" name="nom" placeholder="Votre nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prenom-inscription">Prénom :</label>
+                        <input type="text" id="prenom-inscription" name="prenom" placeholder="Votre prénom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email-inscription">Email :</label>
+                        <input type="email" id="email-inscription" name="email" placeholder="Votre adresse email"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone-inscription">Téléphone :</label>
+                        <input type="tel" id="telephone-inscription" name="telephone"
+                            placeholder="Votre numéro de téléphone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="organisation-inscription">Organisation :</label>
+                        <input type="text" id="organisation-inscription" name="organisation"
+                            placeholder="Nom de votre organisation">
+                    </div>
+                    <div class="form-group">
+                        <label for="mot-de-passe-inscription">Mot de passe :</label>
+                        <input type="password" id="mot-de-passe-inscription" name="motDePasse"
+                            placeholder="Créer un mot de passe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmer-mot-de-passe">Confirmer le mot de passe :</label>
+                        <input type="password" id="confirmer-mot-de-passe" name="confirmerMotDePasse"
+                            placeholder="Confirmer votre mot de passe" required>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="accepter-conditions" name="accepterConditions" required>
+                        <label for="accepter-conditions">J'accepte les <a href="#" id="lien-conditions">conditions
+                                d'utilisation</a> et la <a href="#" id="lien-confidentialite">politique de
+                                confidentialité</a></label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Créer le compte</button>
+                        <button type="button" id="btn-vers-connexion" class="btn-secondary">J'ai déjà un compte</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Page de récupération de mot de passe -->
+        <section id="mot-de-passe-oublie" class="section hidden">
+            <div class="auth-container">
+                <h2>🔑 Récupération de mot de passe</h2>
+                <p style="text-align: center; margin-bottom: 2rem; color: #6c757d;">
+                    Entrez votre adresse email pour réinitialiser votre mot de passe.
+                </p>
+                <form id="form-mot-de-passe-oublie">
+                    <div class="form-group">
+                        <label for="email-recuperation">Email :</label>
+                        <input type="email" id="email-recuperation" name="email" placeholder="Votre adresse email"
+                            required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">📧 Envoyer le lien de récupération</button>
+                        <button type="button" id="btn-retour-connexion" class="btn-secondary">← Retour à la
+                            connexion</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Page de réinitialisation de mot de passe -->
+        <section id="reinitialiser-mot-de-passe" class="section hidden">
+            <div class="auth-container">
+                <h2>🔐 Nouveau mot de passe</h2>
+                <p style="text-align: center; margin-bottom: 2rem; color: #6c757d;">
+                    Définissez votre nouveau mot de passe.
+                </p>
+                <form id="form-reinitialiser-mot-de-passe">
+                    <div class="form-group">
+                        <label for="email-reinitialisation">Email :</label>
+                        <input type="email" id="email-reinitialisation" name="email" placeholder="Votre adresse email"
+                            required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="nouveau-mot-de-passe">Nouveau mot de passe :</label>
+                        <input type="password" id="nouveau-mot-de-passe" name="nouveauMotDePasse"
+                            placeholder="Votre nouveau mot de passe" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmer-nouveau-mot-de-passe">Confirmer le nouveau mot de passe :</label>
+                        <input type="password" id="confirmer-nouveau-mot-de-passe" name="confirmerNouveauMotDePasse"
+                            placeholder="Confirmer votre nouveau mot de passe" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">✅ Réinitialiser le mot de passe</button>
+                        <button type="button" id="btn-annuler-reinitialisation" class="btn-secondary">❌ Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Page d'accès restreint -->
+        <section id="acces-restreint" class="section hidden">
+            <div class="restricted-access">
+                <div class="restricted-icon">🔒</div>
+                <h2>Accès Restreint</h2>
+                <p>Vous devez être connecté pour accéder à cette fonctionnalité.</p>
+                <div class="restricted-actions">
+                    <button id="btn-connexion-restreint" class="btn-primary">Se connecter</button>
+                    <button id="btn-inscription-restreint" class="btn-secondary">Créer un compte</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="active section">
+            <!-- Bannière d'accueil -->
+            <div class="hero">
+                <div class="hero-content">
+                    <h2>Solutions d'Archivage pour votre Organisation</h2>
+                    <p>
+                        Depuis sa création, DARK fournit des solutions logicielles sûres et performantes pour la gestion
+                        électronique de documents.
+                    </p>
+                    <div class="hero-buttons">
+                        <button id="btn-commencer" class="btn-primary">Explorez</button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="imagesite1.jpg" alt="Présentation DARK" />
+                </div>
+            </div>
+
+            <!-- Nos Services -->
+            <section class="services">
+                <h3>Nos Services</h3>
+                <div class="services-grid">
+                    <div class="card-skew">
+                        <div class="align">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="icon-3d"><i data-lucide="shield-check"></i></div>
+                        <div class="text-head">Sûr</div>
+                        <p>Archivage Sécurisé : Stockage chiffré et structuré de vos documents.</p>
+                    </div>
+
+                    <div class="card-skew">
+                        <div class="align">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="icon-3d"><i data-lucide="search"></i></div>
+                        <div class="text-head">Rapide</div>
+                        <p>Recherche Avancée : Filtrez vos fichiers par mots-clés ou types.</p>
+                    </div>
+
+                    <div class="card-skew">
+                        <div class="align">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <div class="icon-3d"><i data-lucide="bell"></i></div>
+                        <div class="text-head">Alertes</div>
+                        <p>Notifications : Recevez des alertes pour chaque mise à jour.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pourquoi Choisir DARK -->
+            <section class="reasons">
+                <h3>Pourquoi Choisir DARK</h3>
+                <div class="reasons-list">
+                    <div class="notification">
+                        <div class="notiglow"></div>
+                        <div class="notiborderglow"></div>
+                        <div class="notititle">Sécurité maximale</div>
+                        <div class="notibody">Chiffrement de bout en bout et protection des données sensibles.</div>
+                    </div>
+                    <div class="notification">
+                        <div class="notiglow"></div>
+                        <div class="notiborderglow"></div>
+                        <div class="notititle">Support 24/7</div>
+                        <div class="notibody">Une équipe d'experts à votre écoute à tout moment.</div>
+                    </div>
+                    <div class="notification">
+                        <div class="notiglow"></div>
+                        <div class="notiborderglow"></div>
+                        <div class="notititle">Interface Moderne</div>
+                        <div class="notibody">Une expérience utilisateur fluide et intuitive.</div>
+                    </div>
+                    <div class="notification">
+                        <div class="notiglow"></div>
+                        <div class="notiborderglow"></div>
+                        <div class="notititle">RGPD Compliant</div>
+                        <div class="notibody">Conformité totale aux normes européennes de protection.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistiques -->
+            <!-- Statistiques -->
+            <section class="stats">
+                <div class="analytics-wrapper">
+                    <div class="analytics-card">
+                        <div class="analytics-glow"></div>
+                        <div class="analytics-content">
+                            <div class="analytics-header">
+                                <div class="header-main">
+                                    <div class="icon-box">
+                                        <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="analytics-h3">Performance & Expérience globale</h3>
+                                </div>
+                                <span class="badge-live"><span class="dot-live"></span>Temps réel</span>
+                            </div>
+
+                            <div class="analytics-main-layout">
+                                <div class="analytics-stats-column">
+                                    <div class="stat-box horizontal-item">
+                                        <div class="stat-flex-row">
+                                            <p class="stat-box-label">Expérience Pro</p>
+                                            <p class="stat-box-value">1 AN</p>
+                                        </div>
+                                    </div>
+                                    <div class="stat-box horizontal-item">
+                                        <div class="stat-flex-row">
+                                            <p class="stat-box-label">Documents</p>
+                                            <p class="stat-box-value">12.5K</p>
+                                        </div>
+                                    </div>
+                                    <div class="stat-box horizontal-item">
+                                        <div class="stat-flex-row">
+                                            <p class="stat-box-label">Utilisateurs actifs</p>
+                                            <p class="stat-box-value">40</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="analytics-chart-side">
+                                    <div class="chart-header">
+                                        <span>Flux de données hebdomadaire</span>
+                                        <span class="stat-box-trend">+100% Growth</span>
+                                    </div>
+                                    <div class="analytics-chart">
+                                        <div class="chart-bars">
+                                            <div class="chart-bar-wrap">
+                                                <div class="chart-bar-fill" style="height: 40%;"></div>
+                                            </div>
+                                            <div class="chart-bar-wrap">
+                                                <div class="chart-bar-fill" style="height: 60%;"></div>
+                                            </div>
+                                            <div class="chart-bar-wrap">
+                                                <div class="chart-bar-fill" style="height: 75%;"></div>
+                                            </div>
+                                            <div class="chart-bar-wrap">
+                                                <div class="chart-bar-fill" style="height: 45%;"></div>
+                                            </div>
+                                            <div class="chart-bar-wrap">
+                                                <div class="chart-bar-fill" style="height: 85%;"></div>
+                                            </div>
+                                            <div class="chart-bar-wrap">
+                                                <div class="chart-bar-fill" style="height: 65%;"></div>
+                                            </div>
+                                            <div class="chart-bar-wrap">
+                                                <div class="chart-bar-fill" style="height: 95%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="analytics-footer"
+                                        style="padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 1rem;">
+                                        <div class="footer-left">
+                                            <span class="footer-text">Derniers 365 jours</span>
+                                            <i data-lucide="chevron-down"></i>
+                                        </div>
+                                        <button class="btn-details">Voir les détails <i
+                                                data-lucide="chevron-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        </section>
+
+        <!-- Page Documents -->
+        <section id="documents" class="section hidden">
+            <h2>Gestion des documents par catégories</h2>
+            <button id="ajouter-document" class="btn-primary"><i data-lucide="plus-circle"></i> Ajouter un
+                document</button>
+
+            <div id="type-document-container" class="hidden">
+                <h3>Quel type de document voulez-vous ajouter ?</h3>
+                <select id="type-document">
+                    <option value="">-- Sélectionnez un type --</option>
+                    <option value="cv">CV (Curriculum Vitae)</option>
+                    <option value="document-administratif">Document Administratif</option>
+                    <option value="fiche-paie">Fiche de Salaire</option>
+                    <option value="liste-employes">Liste des Employés</option>
+                    <option value="liste-etudiants">Liste d'Étudiants</option>
+                </select>
+            </div>
+
+            <div id="formulaire-document" class="hidden"></div>
+
+            <div id="tri-documents" class="tri-documents">
+                <label for="select-tri">Trier par :</label>
+                <select id="select-tri">
+                    <option value="date-desc">Date (plus récents)</option>
+                    <option value="date-asc">Date (plus anciens)</option>
+                    <option value="type-asc">Type (A → Z)</option>
+                    <option value="type-desc">Type (Z → A)</option>
+                </select>
+            </div>
+
+            <div id="filtres-dates">
+                <label for="date-debut">Date de début :</label>
+                <input type="date" id="date-debut">
+
+                <label for="date-fin">Date de fin :</label>
+                <input type="date" id="date-fin">
+
+                <button onclick="filtrerParDates()"><i data-lucide="filter"></i> Filtrer</button>
+                <button onclick="resetFiltreDates()"><i data-lucide="refresh-cw"></i> Réinitialiser</button>
+            </div>
+
+            <!-- Affichage des catégories -->
+            <div id="categories-container" class="categories-container">
+                <div class="category-folder" data-type="cv">
+                    <div class="folder-header">
+                        <span class="folder-icon"><i data-lucide="file-text"></i></span>
+                        <h3>CV (Curriculum Vitae)</h3>
+                        <span class="document-count" id="count-cv">0</span>
+                        <button class="toggle-folder" onclick="toggleFolder('cv')"><i
+                                data-lucide="chevron-down"></i></button>
+                    </div>
+                    <div class="folder-content" id="folder-cv"></div>
+                </div>
+
+                <div class="category-folder" data-type="document-administratif">
+                    <div class="folder-header">
+                        <span class="folder-icon"><i data-lucide="archive"></i></span>
+                        <h3>Documents Administratifs</h3>
+                        <span class="document-count" id="count-document-administratif">0</span>
+                        <button class="toggle-folder" onclick="toggleFolder('document-administratif')"><i
+                                data-lucide="chevron-down"></i></button>
+                    </div>
+                    <div class="folder-content" id="folder-document-administratif"></div>
+                </div>
+
+                <div class="category-folder" data-type="fiche-paie">
+                    <div class="folder-header">
+                        <span class="folder-icon"><i data-lucide="banknote"></i></span>
+                        <h3>Fiches de Salaire</h3>
+                        <span class="document-count" id="count-fiche-paie">0</span>
+                        <button class="toggle-folder" onclick="toggleFolder('fiche-paie')"><i
+                                data-lucide="chevron-down"></i></button>
+                    </div>
+                    <div class="folder-content" id="folder-fiche-paie"></div>
+                </div>
+
+                <div class="category-folder" data-type="liste-employes">
+                    <div class="folder-header">
+                        <span class="folder-icon"><i data-lucide="users"></i></span>
+                        <h3>Listes d'Employés</h3>
+                        <span class="document-count" id="count-liste-employes">0</span>
+                        <button class="toggle-folder" onclick="toggleFolder('liste-employes')"><i
+                                data-lucide="chevron-down"></i></button>
+                    </div>
+                    <div class="folder-content" id="folder-liste-employes"></div>
+                </div>
+
+                <div class="category-folder" data-type="liste-etudiants">
+                    <div class="folder-header">
+                        <span class="folder-icon"><i data-lucide="graduation-cap"></i></span>
+                        <h3>Listes d'Étudiants</h3>
+                        <span class="document-count" id="count-liste-etudiants">0</span>
+                        <button class="toggle-folder" onclick="toggleFolder('liste-etudiants')"><i
+                                data-lucide="chevron-down"></i></button>
+                    </div>
+                    <div class="folder-content" id="folder-liste-etudiants"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Recherche -->
+        <section id="recherche" class="section hidden">
+            <h2><i data-lucide="search"></i> Recherche avancée</h2>
+            <div class="search-controls">
+                <input type="text" id="champ-recherche" placeholder="🔎 Rechercher un document par mot-clé..." />
+                <select id="filtre-categorie">
+                    <option value="">Toutes les catégories</option>
+                    <option value="cv">CV (Curriculum Vitae)</option>
+                    <option value="document-administratif">Documents Administratifs</option>
+                    <option value="fiche-paie">Fiches de Salaire</option>
+                    <option value="liste-employes">Listes d'Employés</option>
+                    <option value="liste-etudiants">Listes d'Étudiants</option>
+                </select>
+            </div>
+            <div id="resultats-recherche" class="resultats-recherche">
+                <p style="text-align: center; color: #6c757d; font-style: italic;"><i data-lucide="search"></i> Entrez
+                    un mot-clé ou sélectionnez une catégorie pour commencer la recherche.</p>
+            </div>
+        </section>
+
+        <!-- Page Paramètres -->
+        <section id="parametres" class="section hidden">
+            <h2><i data-lucide="settings"></i> Paramètres</h2>
+            <div class="parametres-grid">
+                <div class="parametre-card">
+                    <h3><i data-lucide="user"></i> Informations du compte</h3>
+                    <div id="info-utilisateur">
+                        <p><strong>Nom :</strong> <span id="user-nom">-</span></p>
+                        <p><strong>Email :</strong> <span id="user-email">-</span></p>
+                        <p><strong>Organisation :</strong> <span id="user-organisation">-</span></p>
+                        <button id="btn-deconnexion" class="btn-danger"><i data-lucide="log-out"></i> Se
+                            déconnecter</button>
+                    </div>
+                </div>
+                <div class="parametre-card">
+                    <h3><i data-lucide="bar-chart-3"></i> Statistiques générales</h3>
+                    <div id="stats-parametres">
+                        <p><strong>Total de documents :</strong> <span id="total-documents">0</span></p>
+                        <p><strong><i data-lucide="file-text"></i> CV :</strong> <span id="stat-cv">0</span></p>
+                        <p><strong><i data-lucide="archive"></i> Documents Administratifs :</strong> <span
+                                id="stat-admin">0</span></p>
+                        <p><strong><i data-lucide="banknote"></i> Fiches de Salaire :</strong> <span
+                                id="stat-paie">0</span></p>
+                        <p><strong><i data-lucide="users"></i> Listes d'Employés :</strong> <span
+                                id="stat-employes">0</span></p>
+                        <p><strong><i data-lucide="graduation-cap"></i> Listes d'Étudiants :</strong> <span
+                                id="stat-etudiants">0</span></p>
+                    </div>
+                </div>
+                <div class="parametre-card">
+                    <h3><i data-lucide="database"></i> Actions sur les données</h3>
+                    <button onclick="exporterDonnees()" class="btn-primary"><i data-lucide="download"></i> Exporter
+                        toutes les données</button>
+                    <button onclick="confirmerSuppression()" class="btn-danger"><i data-lucide="trash-2"></i> Supprimer
+                        toutes les données</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="modern-footer-dock">
+        <div class="footer-dock-content">
+            <div class="footer-dock-brand">
+                <span class="dock-logo">DARK</span>
+                <span class="dock-separator"></span>
+                <p class="dock-tagline">Archivage Intelligent & Sécurisé</p>
+            </div>
+
+            <nav class="footer-dock-nav">
+                <a href="#dashboard" class="dock-link"><i data-lucide="layout-dashboard"></i></a>
+                <a href="#documents" class="dock-link"><i data-lucide="folder"></i></a>
+                <a href="#recherche" class="dock-link"><i data-lucide="search"></i></a>
+                <a href="#parametres" class="dock-link"><i data-lucide="settings"></i></a>
+            </nav>
+
+            <div class="footer-dock-social">
+                <a href="https://github.com/Medoune-ops" target="_blank" class="social-dock-item"><i
+                        data-lucide="github"></i></a>
+                <a href="mailto:smedoune16@gmail.com" target="_blank" class="social-dock-item"><i
+                        data-lucide="mail"></i></a>
+                <a href="#" class="social-dock-item"><i data-lucide="linkedin"></i></a>
+            </div>
+        </div>
+        <div class="footer-dock-bottom">
+            <p>&copy; 2025 DARK. Design Premium & Sécurité Maximale.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Configuration globale
+        window.DARK_CONFIG = {
+            maxFileSize: 10 * 1024 * 1024, // 10MB
+            allowedFileTypes: ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'],
+            debug: false
+        };
+
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+    <script src="background.js"></script>
+    <script src="interface.js"></script>
+</body>
+
+</html>
